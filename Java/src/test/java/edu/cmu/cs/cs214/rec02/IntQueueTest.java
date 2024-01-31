@@ -38,8 +38,8 @@ public class IntQueueTest {
     @Before
     public void setUp() {
         // comment/uncomment these lines to test each class
-        mQueue = new LinkedIntQueue();
-    //    mQueue = new ArrayIntQueue();
+    //    mQueue = new LinkedIntQueue();
+        mQueue = new ArrayIntQueue();
 
         testList = new ArrayList<>(List.of(1, 2, 3));
     }
@@ -52,20 +52,29 @@ public class IntQueueTest {
 
     @Test
     public void testNotEmpty() {
-        // TODO: write your own unit test
-        fail("Test not implemented");
+        // mQueue.enqueue(1);
+        // assertFalse(mQueue.isEmpty());
+        for (int i = 0; i < testList.size(); i++) {
+            mQueue.enqueue(testList.get(i));
+            assertFalse(mQueue.isEmpty());
+        }
     }
 
     @Test
     public void testPeekEmptyQueue() {
-        // TODO: write your own unit test
-        fail("Test not implemented");
+        assertNull(mQueue.peek());
     }
 
     @Test
     public void testPeekNoEmptyQueue() {
-        // TODO: write your own unit test
-        fail("Test not implemented");
+        // mQueue.enqueue(1);
+        // assertEquals(1, mQueue.peek());
+        // assertEquals(1, mQueue.size());
+        for (int i = 0; i < testList.size(); i++) {
+            mQueue.enqueue(testList.get(i));
+            assertEquals(testList.get(0), mQueue.peek());
+            assertEquals(i + 1, mQueue.size());
+        }
     }
 
     @Test
@@ -80,8 +89,17 @@ public class IntQueueTest {
 
     @Test
     public void testDequeue() {
-        // TODO: write your own unit test
-        fail("Test not implemented");
+        // enqueue
+        for (int i = 0; i < testList.size(); i++) {
+            mQueue.enqueue(testList.get(i));
+        }
+        // dequeue in order
+        for (int i = 0; i < testList.size(); i++) {
+            assertEquals(testList.get(i), mQueue.dequeue());
+            assertEquals(2-i, mQueue.size());
+        }
+        // test for dequeue from an empty queue
+        assertNull(mQueue.dequeue());
     }
 
     @Test
@@ -105,5 +123,85 @@ public class IntQueueTest {
         }
     }
 
+    @Test
+    public void testClear() {
+        // enqueue
+        for (int i = 0; i < testList.size(); i++) {
+            mQueue.enqueue(testList.get(i));
+        }
+        mQueue.clear();
+        assertTrue(mQueue.isEmpty());
+    }
+
+    @Test
+    public void testSize() {
+        // test empty queue size
+        assertEquals(0, mQueue.size());
+        // enqueue
+        for (int i = 0; i < testList.size(); i++) {
+            mQueue.enqueue(testList.get(i));
+            assertEquals(i+1, mQueue.size());
+        }
+        // dequeue
+        for (int i = testList.size(); i > 0; i--) {
+            mQueue.dequeue();
+            assertEquals(i-1, mQueue.size());
+        }
+    }
+
+    @Test
+    public void testEnsureCapacityHeadIs0() {
+        // Enqueue 10 elements to fill the queue
+        for (int i = 0; i < 10; i++) {
+            mQueue.enqueue(i);
+        }
+
+        // Check size before the resize
+        assertEquals(10, mQueue.size());
+
+        // Enqueue one more element to trigger the resize
+        mQueue.enqueue(10);
+
+        // Check size after the resize
+        assertEquals(11, mQueue.size());
+
+        // Now dequeue all elements and check if they are in correct order
+        for (int i = 0; i < 11; i++) {
+            assertEquals(Integer.valueOf(i), mQueue.dequeue());
+        }
+
+        // Finally, check if the queue is empty
+        assertTrue(mQueue.isEmpty());
+    }
+
+    @Test
+    public void testEnsureCapacityHeadNot0() {
+        // Enqueue 10 elements to fill the queue
+        for (int i = 0; i < 10; i++) { //[0,9]
+            mQueue.enqueue(i);
+        }
+
+        // Check size before the resize
+        assertEquals(10, mQueue.size());
+
+        // Dequeue the head to change head to 1
+        mQueue.dequeue(); //[1,9]
+        mQueue.enqueue(10); //[1,10]
+        assertEquals(10, mQueue.size());
+
+        // Enqueue one more element to trigger the resize
+        mQueue.enqueue(11); //[1,11]
+
+        // Check size after the resize
+        assertEquals(11, mQueue.size());
+
+        // Now dequeue all elements and check if they are in correct order
+        for (int i = 1; i < 12; i++) {
+            assertEquals(Integer.valueOf(i), mQueue.dequeue());
+        }
+
+        // Finally, check if the queue is empty
+        assertTrue(mQueue.isEmpty());
+    }
 
 }
